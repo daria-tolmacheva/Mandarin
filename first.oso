@@ -1,0 +1,11 @@
+OpenShadingLanguage 1.00
+# Compiled by oslc 1.11.0@OPROJECT_VERSION_RELEASE_TYPE@
+# options: 
+shader first
+param	color	Cin	0 0 0		%read{0,0} %write{2147483647,-1}
+oparam	color	Cout	0 0 0		%read{2147483647,-1} %write{0,0}
+code ___main___
+# first.osl:7
+# 	Cout=Cin;
+	assign		Cout Cin 	%filename{"first.osl"} %line{7} %argrw{"wr"}
+	end

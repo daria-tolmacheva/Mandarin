@@ -1,0 +1,52 @@
+#mandarin.rib - basic scene with a mandarin
+
+Display "mandarin.tiff" "file" "rgb"
+Format 640 480 1.0
+
+Hider "raytrace" "int incremental" [1]
+PixelVariance 0.001
+Integrator "PxrPathTracer" "integrator"
+
+Projection "perspective" #"fov" [ 30 ]
+
+WorldBegin
+
+	# Light
+	AttributeBegin
+		Rotate -100 1 0 0
+		Rotate 90 0 0 1
+		Light "PxrDomeLight" "theLight"
+			"float exposure" [0]
+			"string lightColorMap" ["EnvMap.tx"]
+	AttributeEnd
+
+	# Mandarin
+	AttributeBegin
+		Translate 0 0 2
+
+		Attribute "displacementbound" "sphere" [0.21] "coordinatesystem" ["shader"]
+		Pattern "displacement" "diskTx"
+		Displace "PxrDisplace" "myDisp"
+			"float dispAmount" [ 0.12 ]
+			"reference float dispScalar" [ "diskTx:mag" ]
+
+		Pattern "first" "myShader"
+			"color Cin" [0.9 0.5 0.1]
+		Bxdf "PxrDisney" "forTheTeapot"
+			"reference color baseColor" ["myShader:Cout"]
+			"float specular" [0.5]
+			"float roughness" [0.5]
+		
+		
+		TransformBegin
+					Scale 1 0.8 1
+					Rotate -30 0 0 1
+					Sphere 1 -1 1 360
+		TransformEnd
+
+	AttributeEnd
+
+	Bxdf "PxrDisney" "forTheBackground"
+			"color baseColor" [ 0.1 0.8 0.1 ]
+
+WorldEnd
