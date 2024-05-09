@@ -14,7 +14,7 @@ WorldBegin
 	# Light
 	AttributeBegin
 		Rotate -100 1 0 0
-		Rotate 90 0 0 1
+		Rotate 120 0 0 1
 		Light "PxrDomeLight" "theLight"
 			"float exposure" [0]
 			"string lightColorMap" ["EnvMap.tx"]
@@ -23,24 +23,27 @@ WorldBegin
 	# Mandarin
 	AttributeBegin
 		Translate 0 0 2
+		Rotate -90 1 0 0
+		Rotate -30 0 1 0
+		Rotate -30 0 0 1
 
-		Attribute "displacementbound" "sphere" [0.21] "coordinatesystem" ["shader"]
-		Pattern "displacement" "diskTx"
+		Attribute "displacementbound" "sphere" [0.3] "coordinatesystem" ["world"]
+		Pattern "displacement_shader" "diskTx"
 		Displace "PxrDisplace" "myDisp"
-			"float dispAmount" [ 0.12 ]
+			"float dispAmount" [ 0.05 ]
 			"reference float dispScalar" [ "diskTx:mag" ]
 
 		Pattern "first" "myShader"
-			"color Cin" [0.9 0.5 0.1]
-		Bxdf "PxrDisney" "forTheTeapot"
+			"color Cin" [0.99 0.4 0.1]
+		Bxdf "PxrDisney" "forTheMandarin"
 			"reference color baseColor" ["myShader:Cout"]
-			"float specular" [0.5]
-			"float roughness" [0.5]
+			"float specular" [0.8]
+			"float roughness" [0.3]
 		
-		
+
 		TransformBegin
 					Scale 1 0.8 1
-					Rotate -30 0 0 1
+					Rotate 90 1 0 0
 					Sphere 1 -1 1 360
 		TransformEnd
 

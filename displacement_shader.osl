@@ -1,0 +1,75 @@
+shader displacement_shader (
+	color Cin=1,
+	output float mag=0,
+	output	color Cout=1
+	)
+{
+	// vector NN = normalize(N);
+	// point PP = transform("shader",P);
+
+//==================================================//
+// Low frequency bumps
+//==================================================//
+	float i;
+	float freq=0.9;
+
+	for(i=0;i<6;i+=1)
+	{
+		mag+=abs((float)noise("perlin",P*freq))/(freq*freq);
+		freq*=3.1;
+	}
+	mag=smoothstep(0.1,0.9,mag);
+	mag*=0.65;
+//==================================================//
+// Top squish
+//==================================================//
+	float top_center = smoothstep(0.01,0.15,v);
+	float top_squish = mix(-3, 0, top_center);
+
+	mag+=top_squish;
+
+//==================================================//
+// Top stem hole
+//==================================================//
+	freq = 32;
+	float fuzz = abs(noise("uperlin", P*freq))*0.005;
+	float stem_hole_pos = smoothstep(0.022+fuzz, 0.023+fuzz, v);
+	float stem_hole = -0.7;
+	stem_hole = mix(stem_hole, 0, stem_hole_pos);
+	
+	mag+=stem_hole;
+
+//==================================================//
+// Bottom squish
+//==================================================//
+	// float bottom_center = smoothstep(0.7,0.92,v);
+	// float bottom_squish = mix(0, -0.5*mag, bottom_center);
+	// float bottom_center_around = smoothstep(0.8,0.92,v);
+	// float bottom_squish_around = mix(-mag, -2*mag, bottom_center_around);
+
+	// mag+=bottom_squish;//+bottom_squish_around;
+
+	float bottom_center_small = smoothstep(0.9,0.99,v);
+	float bottom_squish_small = mix(0, -1, bottom_center_small);
+
+	mag+=bottom_squish_small;
+
+//==================================================//
+// Bottom green dot
+//==================================================//
+	freq = 64;
+	fuzz = abs(noise("uperlin", P*freq))*0.001;
+	stem_hole_pos = smoothstep(0.9935+fuzz, 0.995+fuzz, v);
+	stem_hole = 0.05;
+	stem_hole = mix(0, stem_hole, stem_hole_pos);
+	
+	mag+=stem_hole;
+
+	
+
+//==================================================//
+// Final Output
+//==================================================//
+	Cout=mag;
+//==================================================//
+}

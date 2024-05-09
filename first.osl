@@ -1,8 +1,27 @@
-
-shader first(
-	color Cin  = 0,
-output	color Cout = 0
+shader first (
+		color Cin  = 0,
+		output	color Cout = 0
 	)
 	{
-	Cout=Cin;
+		// color stem_col = color("rgb", 0.23, 0.25, 0.20);
+	
+		// float freq = 64;
+		// float fuzz = abs(noise("uperlin", P*freq))*0.001;
+		// float position = smoothstep(0.9935+fuzz, 0.995+fuzz, v);
+		// stem_col = mix(Cin, stem_col, position);
+		
+
+		// Cout = stem_col;
+		// Cout=Cin;
+
+		float repeatCount=30;
+    int whichStripe=(int)floor(u*repeatCount);
+		if (whichStripe%3 == 0)
+		{
+			Cout=(float)(whichStripe%3);
+		}
+		else
+		{
+    	Cout=color("rgb", 1,1,1);
+		}
 	}
