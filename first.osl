@@ -10,18 +10,80 @@ shader first (
 		// float position = smoothstep(0.9935+fuzz, 0.995+fuzz, v);
 		// stem_col = mix(Cin, stem_col, position);
 		
-
 		// Cout = stem_col;
 		// Cout=Cin;
 
-		float repeatCount=30;
-    int whichStripe=(int)floor(u*repeatCount);
-		if (whichStripe%3 == 0)
+		// float repeatCount=30;
+    // int whichStripe=(int)floor(u*repeatCount);
+		// if (whichStripe%3 == 0)
+		// {
+		// 	Cout=(float)(whichStripe%3);
+		// }
+		// else
+		// {
+    // 	Cout=color("rgb", 1,1,1);
+		// }
+
+		// color col = color("rgb", 0,0,0);
+		// color band;
+
+		// float i;
+		// for(i=0;i<6;i+=1)
+		// {
+		// 	float edge1 = 1/6*i;
+		// 	float edge2 = 1/6*(i+1);
+		// 	float width = edge2 - edge1;
+		// 	edge1+=0.1*width;
+		// 	edge2-=0.1*width;
+
+		// 	float freq = 2;
+		// 	float fuzz = abs(noise("perlin", P*freq))*0.05;
+
+		// 	float band_pos = smoothstep(0.5+fuzz, 0.55+fuzz, u);
+		// 	float band_pos_2 = smoothstep(0.35+fuzz, 0.4+fuzz, u);
+
+		// 	band_pos-=band_pos_2;
+		// 	band_pos = abs(band_pos);
+		// 	// vertical
+		// 	float band_length = smoothstep(0.1, 0.3, v);
+		// 	band_pos-=band_length;
+
+		// 	color band_piece = mix(Cin, col, band_pos);
+		// 	band+=band_piece;
+		// }
+
+		// Cout = band;
+
+		float i;
+		for(i=0;i<6;i+=1)
 		{
-			Cout=(float)(whichStripe%3);
+			float edge1 = 1/6*i;
+			float edge2 = 1/6*(i+1);
+			float width = edge2 - edge1;
+			edge1+=0.1*width;
+			edge2-=0.1*width;
+
 		}
-		else
-		{
-    	Cout=color("rgb", 1,1,1);
-		}
+
+		color col = color("rgb", 0,0,0);
+
+		float freq = 8;
+		// float fuzz = abs(noise("perlin", P*freq))*0.05;
+
+		// float band_pos = smoothstep(0.5+fuzz, 0.55+fuzz, u);
+		// float band_pos_2 = smoothstep(0.35+fuzz, 0.4+fuzz, u);
+
+		// band_pos-=band_pos_2;
+		// band_pos = abs(band_pos);
+		// // vertical
+		// float band_length = smoothstep(0.1, 0.3, v);
+		// band_pos-=band_length;
+
+		// color band = mix(Cin, col, band_pos);
+
+		float band_pos = pnoise("uperlin", u*freq, 1);
+		color band = mix(Cin, col, band_pos);
+
+		Cout = band;
+
 	}
