@@ -1,89 +1,213 @@
 shader first (
 		color Cin  = 0,
-		output	color Cout = 0
+		float Rin = 0,
+		float SSSin = 0,
+		output	color Cout = 0,
+		output	float Rout = 0,
+		output	float SSSout = 0
 	)
 	{
-		// color stem_col = color("rgb", 0.23, 0.25, 0.20);
+		Rout=Rin;
+		Cout=Cin;
+		SSSout=SSSin;
+//==================================================//
+// Low frequency variation
+//==================================================//
+	float i;
+	float freq=0.6;
+	float pos = 0;
+	color low_freq_col = color ("rgb", 1, 0.357, 0.098);
+
+	for(i=0;i<10;i+=1)
+	{
+		pos+=abs((float)noise("perlin",P*freq, 3))/(freq*freq);
+		freq*=2.7;
+	}
+	// pos=smoothstep(0.1,0.9,pos);
+
+	color sCols[4]={
+			color("rgb",0.988, 0.571, 0.118),
+			color("rgb",0.988, 0.429, 0.098),
+			color("rgb",0.99, 0.335, 0.1),
+			color("rgb",1, 0.306, 0.11)
+	};
+
+	// Cout = (color)spline("catmull-rom", pos, sCols);
+	Cout = mix(color("rgb",0.988, 0.451, 0.11), color("rgb",0.989, 0.395, 0.105), pos);
+
+//==================================================//
+// Top stem hole
+//==================================================//
+	color stem_col = color("rgb", 0.871, 0.549, 0.31);
+
+	freq = 32;
+	float fuzz = abs(noise("uperlin", P*freq))*0.005;
+	float top_stem_hole_pos = 1 - smoothstep(0.022+fuzz, 0.023+fuzz, v);
 	
-		// float freq = 64;
-		// float fuzz = abs(noise("uperlin", P*freq))*0.001;
-		// float position = smoothstep(0.9935+fuzz, 0.995+fuzz, v);
-		// stem_col = mix(Cin, stem_col, position);
-		
-		// Cout = stem_col;
-		// Cout=Cin;
+	Cout = mix(Cout, stem_col, top_stem_hole_pos);	
+	Rout = mix(Rout, 0.7, top_stem_hole_pos);
+	SSSout = mix(SSSout, 0.005, top_stem_hole_pos);
 
-		// float repeatCount=30;
-    // int whichStripe=(int)floor(u*repeatCount);
-		// if (whichStripe%3 == 0)
-		// {
-		// 	Cout=(float)(whichStripe%3);
-		// }
-		// else
-		// {
-    // 	Cout=color("rgb", 1,1,1);
-		// }
+//==================================================//
+// Bottom green dot
+//==================================================//
+	freq = 64;
+	fuzz = abs(noise("uperlin", P*freq))*0.001;
+	float stem_hole_pos = smoothstep(0.9935+fuzz, 0.995+fuzz, v);
+	color stem_hole_col = color("rgb", 0.392, 0.431, 0.349)*0.5;
+	// stem_hole = mix(0, stem_hole, stem_hole_pos);
+	
+	Cout = mix(Cout, stem_hole_col, stem_hole_pos);
+	Rout = mix(Rout, 0.7, stem_hole_pos);
+	SSSout = mix(SSSout, 0, stem_hole_pos);
 
-		// color col = color("rgb", 0,0,0);
-		// color band;
+//==================================================//
+// Dots
+//==================================================//
+	float coef = smoothstep(-0.1, 0.2, v);
+	float coef2 = smoothstep(0.01, 0.1, (1-v));
+	coef *= coef2;
+	coef = mix(0, 1, coef);
 
-		// float i;
-		// for(i=0;i<6;i+=1)
-		// {
-		// 	float edge1 = 1/6*i;
-		// 	float edge2 = 1/6*(i+1);
-		// 	float width = edge2 - edge1;
-		// 	edge1+=0.1*width;
-		// 	edge2-=0.1*width;
+	point UVW = transform("object", P);
+	float Scale  = 0.0175;
+	float Radius = 0.6*coef;
 
-		// 	float freq = 2;
-		// 	float fuzz = abs(noise("perlin", P*freq))*0.05;
+	float Col = 0;
+	float Dist   = 0;
 
-		// 	float band_pos = smoothstep(0.5+fuzz, 0.55+fuzz, u);
-		// 	float band_pos_2 = smoothstep(0.35+fuzz, 0.4+fuzz, u);
-
-		// 	band_pos-=band_pos_2;
-		// 	band_pos = abs(band_pos);
-		// 	// vertical
-		// 	float band_length = smoothstep(0.1, 0.3, v);
-		// 	band_pos-=band_length;
-
-		// 	color band_piece = mix(Cin, col, band_pos);
-		// 	band+=band_piece;
-		// }
-
-		// Cout = band;
-
-		float i;
-		for(i=0;i<6;i+=1)
+	point pnt = UVW / Scale;
+	float pri = -1;
+  
+  for (float x = -1; x <= 1; x++)
+	{
+    for (float y = -1; y <= 1; y++)
 		{
-			float edge1 = 1/6*i;
-			float edge2 = 1/6*(i+1);
-			float width = edge2 - edge1;
-			edge1+=0.1*width;
-			edge2-=0.1*width;
+			for(float z = -1; z <= 1; z++)
+			{
+				point rndpoint = floor(pnt) + point(x, y, z) + 0.00;
+				point dotcenter = rndpoint + noise("cell", rndpoint, 2)*0.9;
+				float dist = distance(dotcenter, pnt);
+				float priority = noise("cell", rndpoint, 2);
 
+				if (dist < Radius && priority > pri)
+				{
+					pri = priority;
+					Dist   = dist / Radius;
+					Col = pow(sin((1.0 - Dist) * 1.58), 1.0);
+				}
+			}
 		}
+	}
+	Col *= coef;
 
-		color col = color("rgb", 0,0,0);
+	color Dot_color = Cout*0.8+color("rgb", 0.075, 0, 0);
+	Cout = mix(Cout, Dot_color, Col);
+	SSSout = mix(SSSout, 0.1, Col);
+//==================================================//
+// Tiny black dots
+//==================================================//
+	coef = smoothstep(-0.1, 0.2, v);
+	coef = mix(0, 1, coef);
+	coef-=stem_hole_pos;
 
-		float freq = 8;
-		// float fuzz = abs(noise("perlin", P*freq))*0.05;
+	UVW = transform("object", P);
+	Scale  = 0.015;
+	freq = 24;
+	Radius = 0.4*abs(noise("uperlin", P*freq));
 
-		// float band_pos = smoothstep(0.5+fuzz, 0.55+fuzz, u);
-		// float band_pos_2 = smoothstep(0.35+fuzz, 0.4+fuzz, u);
+	Col = 0;
+	Dist   = 0;
 
-		// band_pos-=band_pos_2;
-		// band_pos = abs(band_pos);
-		// // vertical
-		// float band_length = smoothstep(0.1, 0.3, v);
-		// band_pos-=band_length;
+	pnt = UVW / Scale;
+	pri = -1;
+  
+  for (float x = -1; x <= 1; x++)
+	{
+    for (float y = -1; y <= 1; y++)
+		{
+			for(float z = -1; z <= 1; z++)
+			{
+				point rndpoint = floor(pnt) + point(x, y, z) + 0.00;
+				point dotcenter = rndpoint + noise("cell", rndpoint, 2)*0.9;
+				float dist = distance(dotcenter, pnt);
+				float priority = noise("cell", rndpoint, 2);
 
-		// color band = mix(Cin, col, band_pos);
+				if (dist < Radius && priority > pri)
+				{
+					pri = priority;
+					Dist   = dist / Radius;
+					Col = pow(sin((1.0 - Dist) * 1.58), 1.0);
+				}
+			}
+		}
+	}
+	Col *= coef;
 
-		float band_pos = pnoise("uperlin", u*freq, 1);
-		color band = mix(Cin, col, band_pos);
+	i;
+	freq=1.1;
+	pos = 0;
+	for(i=0;i<7;i+=1)
+	{
+		pos+=abs((float)noise("perlin",P*freq))/(freq);
+		freq*=2.7;
+	}
+	pos=smoothstep(0.1,0.9,pos);
+	float bottom_center_small = smoothstep(0.85+fuzz,0.99+fuzz,v);
+	pos += bottom_center_small;
+	pos = smoothstep(0,1,pos);
+	Col *= pos;
+	Dot_color = color("rgb", 0.01, 0.02, 0.01);
 
-		Cout = band;
+	Cout = mix(Cout, Dot_color, Col);
+	Rout = mix(Rout, 0.7, Col);
+	SSSout = mix(SSSout, 0, Col);
 
+//==================================================//
+// Timy black dots botton extra
+//==================================================//
+	freq = 64;
+	fuzz = abs(noise("uperlin", P*freq))*0.0125;
+	coef2 = smoothstep(0.005, 0.03+fuzz, (1-v));
+	coef2 = mix(1, 0, coef2);
+	coef2-=stem_hole_pos;
+
+	UVW = transform("object", P);
+	Scale  = 0.005;
+	freq = 24;
+	float rad_dif = smoothstep(0, 0.5, abs(noise("uperlin", P*freq)));
+	Radius = 0.5*rad_dif;
+
+	Col = 0;
+	Dist   = 0;
+
+	pnt = UVW / Scale;
+	pri = -1;
+  
+  for (float x = -1; x <= 1; x++)
+	{
+    for (float y = -1; y <= 1; y++)
+		{
+			for(float z = -1; z <= 1; z++)
+			{
+				point rndpoint = floor(pnt) + point(x, y, z) + 0.00;
+				point dotcenter = rndpoint + noise("cell", rndpoint, 2)*0.9;
+				float dist = distance(dotcenter, pnt);
+				float priority = noise("cell", rndpoint, 2);
+
+				if (dist < Radius && priority > pri)
+				{
+					pri = priority;
+					Dist   = dist / Radius;
+					Col = pow(sin((1.0 - Dist) * 1.58), 1.0);
+				}
+			}
+		}
+	}
+	Col *= coef2;
+	Dot_color = stem_hole_col*0.3;
+
+	Cout = mix(Cout, Dot_color, Col);
+	Rout = mix(Rout, 0.7, Col);
+	SSSout = mix(SSSout, 0, Col);
 	}

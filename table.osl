@@ -1,0 +1,8 @@
+shader table (
+		output color Cout = 0,
+    output float Bout = 0
+	)
+	{
+    Cout = (color) texture("table.tx", u*2, v*2);
+    Bout = (float) texture("table_bmp.tx", u*2, v*2);
+  }

@@ -18,8 +18,26 @@ shader displacement_shader (
 		mag+=abs((float)noise("perlin",P*freq))/(freq*freq);
 		freq*=3.1;
 	}
-	mag=smoothstep(0.1,0.9,mag);
-	mag*=0.65;
+	mag = smoothstep(0.1, 0.9, mag);
+	mag*=0.75;
+//==================================================//
+// High frequency noise
+//==================================================//
+	i;
+	freq=7;
+	float veins = 0;
+	point PP=transform("shader",P);
+	PP*=3;
+
+	for(i=0;i<10;i+=1)
+	{
+		veins+=abs((float)noise("perlin",PP*freq))/freq;
+		freq*=2.1;
+	}
+	veins = smoothstep(0, 0.05, veins);
+	float veins_depth = -0.02;
+	veins = mix(veins_depth, 0, veins);
+	mag+=veins;
 //==================================================//
 // Top squish
 //==================================================//
@@ -33,11 +51,19 @@ shader displacement_shader (
 //==================================================//
 	freq = 32;
 	float fuzz = abs(noise("uperlin", P*freq))*0.005;
-	float stem_hole_pos = smoothstep(0.022+fuzz, 0.023+fuzz, v);
-	float stem_hole = -0.7;
-	stem_hole = mix(stem_hole, 0, stem_hole_pos);
+	float top_stem_hole_pos = smoothstep(0.022+fuzz, 0.023+fuzz, v);
+	freq = 42;
+	for(i=0;i<5;i+=1)
+	{
+		fuzz = abs(noise("uperlin", P*freq));
+		freq*2.1;
+	}
+	fuzz = smoothstep(0.5, 1.0, fuzz)*-0.2;
+	float top_stem_hole = -0.7+fuzz;
+	// float top_stem_hole = -0.7;
+	top_stem_hole = mix(top_stem_hole, 0, top_stem_hole_pos);
 	
-	mag+=stem_hole;
+	mag+=top_stem_hole;
 
 //==================================================//
 // Bottom squish
@@ -59,13 +85,123 @@ shader displacement_shader (
 //==================================================//
 	freq = 64;
 	fuzz = abs(noise("uperlin", P*freq))*0.001;
-	stem_hole_pos = smoothstep(0.9935+fuzz, 0.995+fuzz, v);
-	stem_hole = 0.05;
+	float stem_hole_pos = smoothstep(0.9935+fuzz, 0.995+fuzz, v);
+	float stem_hole = 0.05;
 	stem_hole = mix(0, stem_hole, stem_hole_pos);
 	
 	mag+=stem_hole;
 
-	
+//==================================================//
+// Slices on top
+//==================================================//
+
+	float slice_val = -0.3;
+
+	int max_num_slices = 9;
+	int min_num_slices = 7;
+	float num_slices = min_num_slices + noise("uperlin", 0.5)*(max_num_slices-min_num_slices);
+	i = 0;
+	// float band_pos_total = 1;
+	float band_pos_total = 0;
+	for (i=0.5;i<num_slices;i+=1)
+	{
+		freq = 2.1;
+		fuzz = abs(noise("perlin", u*freq))*0.1;
+		float slice_pos = (i)/num_slices + fuzz;
+
+		if (slice_pos<0.95 && slice_pos>0.05)
+		{
+			freq = 0.5;
+			fuzz = abs(noise("perlin", P*freq))*0.05;
+
+			float j = 0;
+			for (j=0;j<5;j+=1)
+			{
+				freq += 2.3;
+				fuzz += noise("perlin", P*freq)/freq*0.1;
+			}
+
+			float coef = smoothstep(0.8, 0.95, 1-v);
+			coef = mix(0, 1, coef);
+			fuzz *= coef;
+			
+			float band_pos = smoothstep(slice_pos+fuzz, slice_pos+0.05+fuzz, u);
+			float band_pos_2 = smoothstep(slice_pos-0.05+fuzz, slice_pos+fuzz, u);
+
+			band_pos-=band_pos_2;
+			band_pos = abs(band_pos);
+
+			band_pos_total += band_pos;
+		}
+	}
+
+	// vertical
+	freq = 1;
+	fuzz =  0;
+	for(i=0;i<5;i+=1)
+	{
+		fuzz += abs(noise("perlin", P*freq))*0.05;
+		freq+=1.5;
+	}
+	// float freq = 3;
+	// float fuzz = abs(noise("perlin", P*freq))*0.05;
+	float band_length = smoothstep(0.001+fuzz, 0.1+fuzz, v);
+	band_pos_total-=band_length;
+	band_pos_total*=top_stem_hole_pos;
+	float coef = smoothstep(0.65, 0.95, 1-v);
+	coef = mix(0.01, 1, coef);
+	band_pos_total *= coef;
+	slice_val = mix(0, slice_val, band_pos_total);
+
+	mag+=slice_val;
+
+//==================================================//
+// Dots - altered from:
+// https://github.com/redshift3d/RedshiftOSLShaders/blob/main/Dots.osl
+//==================================================//
+
+	coef = smoothstep(-0.1, 0.2, v);
+	float coef2 = smoothstep(0.01, 0.1, (1-v));
+	coef *= coef2;
+	coef = mix(0, 1, coef);
+
+	point UVW = transform("object", P);
+	float Scale  = 0.0175;
+	float Radius = 0.6*coef;
+	float BumpAmount = 1.0;
+	float BumpShape  = 1.0;
+
+	float dots = 0;
+	float dots_pos = 0;
+	float Dist   = 0;
+
+	point pnt = UVW / Scale;
+	float pri = -1;
+  
+  for (float x = -1; x <= 1; x++)
+	{
+    for (float y = -1; y <= 1; y++)
+		{
+			for(float z = -1; z <= 1; z++)
+			{
+				point rndpoint = floor(pnt) + point(x, y, z) + 0.00;
+				point dotcenter = rndpoint + noise("cell", rndpoint, 2)*0.9;
+				float dist = distance(dotcenter, pnt);
+				float priority = noise("cell", rndpoint, 2);
+
+				if (dist < Radius && priority > pri)
+				{
+					pri = priority;
+					Dist   = dist / Radius;
+					dots_pos = pow(sin((1.0 - Dist) * 1.58), 1.0);
+				}
+			}
+		}
+	}
+	dots_pos *= coef;
+	dots = mix(0, -0.04, dots_pos);	
+
+	mag+=dots;
 
 //==================================================//
 // Final Output

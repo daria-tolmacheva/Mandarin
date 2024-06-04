@@ -1,0 +1,112 @@
+#image.rib - basic scene with a mandarin
+
+Display "image1.tiff" "file" "rgb"
+Format 1920 1080 1.0
+
+Hider "raytrace" "int incremental" [1] "int maxsamples" [1024]
+DepthOfField 1.4 0.3 17.8
+PixelVariance 0.001
+Integrator "PxrPathTracer" "integrator"
+
+PixelFilter "gaussian" 2 2
+
+Projection "perspective"  "fov" [ 25 ]
+# Projection "perspective" #"fov" [ 90 ]
+
+FrameBegin 1
+##CameraOrientation 10.0 10.0 10.0 0.0 0.0 0.0
+Transform  [.707107  -.408248  -.57735 0
+            0  .816497  -.57735  0
+            -.707107  -.408248  -.57735  0
+            0  0  17.3205  1 ]
+
+  WorldBegin
+
+    TransformBegin
+      Translate 0 -0.5 2
+
+      # Light
+      AttributeBegin
+        Rotate 10 0 1 0
+        Rotate -90 1 0 0
+        Light "PxrDomeLight" "theLight"
+          "float exposure" [0]
+          "float intensity" [0.5]
+          "string lightColorMap" ["hdri/studio.tx"]
+      AttributeEnd
+
+
+      # Table
+      AttributeBegin
+        Rotate 10 0 1 0
+        Translate 0 1.07 0
+        Rotate 90 1 0 0
+        Translate -5 -8 0
+        Scale 30 30 5
+
+        Attribute "displacementbound" "sphere" [0.5] "coordinatesystem" ["object"]
+        Pattern "table" "tableTexture"
+
+        Displace "PxrDisplace" "tableDisp" "float dispAmount" [ 0.06 ] "reference float dispScalar" ["tableTexture:Bout"]
+        Bxdf "PxrDisney" "tableShader" "reference color baseColor" ["tableTexture:Cout"] "float specular" [0.05]
+
+        TransformBegin
+          Patch "bilinear" "P" [-0.5 -0.5 0.5 -0.5 0.5 0.5 0.5 -0.5 0.5 0.5 0.5 0.5]
+        TransformEnd
+      AttributeEnd
+
+      # Mandarin
+      AttributeBegin
+        Translate -1.2 0 -1
+        Scale 2 2 2
+        Rotate -30 0 1 0
+        Rotate -5 1 0 0
+        Rotate -5 0 0 1
+
+        Attribute "displacementbound" "sphere" [0.3] "coordinatesystem" ["world"]
+        Pattern "displacement_shader" "diskTx"
+        Displace "PxrDisplace" "myDisp"
+          "float dispAmount" [ 0.05 ]
+          "reference float dispScalar" [ "diskTx:mag" ]
+
+        Pattern "first" "myShader"
+          "color Cin" [0.99 0.4 0.1]
+          "float Rin" [0.2]
+          "float SSSin" [0.01]
+
+        Bxdf "PxrDisney" "forTheMandarin2"
+          "reference color baseColor" ["myShader:Cout"]
+          "float specular" [0.9]
+          "reference float roughness" ["myShader:Rout"]
+          "reference float subsurface" ["myShader:SSSout"]
+          "color subsurfaceColor" [0.969 0.204 0.094]
+        #-----------------------------------------------------------------------------
+        # Wanted to add better subsurface scattering, but it doesn't look good at all
+        # at the object edges, so sticking with disney one :(
+        #-----------------------------------------------------------------------------
+        # Bxdf "PxrSurface" "forTheMandarin"
+        # 	"reference color diffuseColor" ["myShader:Cout"]
+        # 	"color specularFaceColor" [0.055 0.055 0.055]
+        # 	"reference float specularRoughness" ["myShader:Rout"]
+        # 	"float specularAnisotropy" [0.7]
+        # 	"float singlescatterGain" [0.5]
+        # 	"color singlescatterColor" [0.969 0.204 0.094]
+        # 	"float singlescatterGain" [0.5]
+        # 	"float singlescatterMfp" [32]
+        #-----------------------------------------------------------------------------
+          
+        TransformBegin
+              Scale 1 0.8 1
+              Rotate 90 1 0 0
+              Sphere 1 -1 1 360
+        TransformEnd
+
+      AttributeEnd
+
+    TransformEnd
+
+    Bxdf "PxrDisney" "forTheBackground"
+        "color baseColor" [ 0.1 0.8 0.1 ]
+
+  WorldEnd
+FrameEnd

@@ -3,61 +3,201 @@ OpenShadingLanguage 1.00
 # options: 
 shader displacement_shader
 param	color	Cin	1 1 1		%read{2147483647,-1} %write{2147483647,-1}
-oparam	float	mag	0		%read{3,43} %write{3,42}
-oparam	color	Cout	1 1 1		%read{2147483647,-1} %write{43,43}
-global	point	P	%read{5,33} %write{2147483647,-1}
-global	float	v	%read{15,39} %write{2147483647,-1}
-local	float	i	%read{3,12} %write{2,12}
-local	float	freq	%read{3,33} %write{0,32}
-local	float	top_center	%read{16,16} %write{15,15}
-local	float	top_squish	%read{17,17} %write{16,16}
-local	float	fuzz	%read{23,38} %write{22,36}
-local	float	stem_hole_pos	%read{27,41} %write{25,39}
-local	float	stem_hole	%read{27,42} %write{26,41}
-local	float	bottom_center_small	%read{30,30} %write{29,29}
-local	float	bottom_squish_small	%read{31,31} %write{30,30}
-const	float	$const1	0.899999976		%read{0,29} %write{2147483647,-1}
-const	int	$const2	0		%read{2,4} %write{2147483647,-1}
+oparam	float	mag	0		%read{3,220} %write{3,219}
+oparam	color	Cout	1 1 1		%read{2147483647,-1} %write{220,220}
+global	point	P	%read{5,167} %write{2147483647,-1}
+global	float	u	%read{91,132} %write{2147483647,-1}
+global	float	v	%read{35,162} %write{2147483647,-1}
+local	float	i	%read{3,149} %write{2,149}
+local	float	freq	%read{3,149} %write{0,149}
+local	float	veins	%read{22,34} %write{16,33}
+local	point	PP	%read{19,30} %write{18,19}
+local	float	veins_depth	%read{33,33} %write{32,32}
+local	float	top_center	%read{36,36} %write{35,35}
+local	float	top_squish	%read{37,37} %write{36,36}
+local	float	fuzz	%read{43,151} %write{42,149}
+local	float	top_stem_hole_pos	%read{59,154} %write{45,45}
+local	float	top_stem_hole	%read{59,60} %write{58,59}
+local	float	bottom_center_small	%read{62,62} %write{61,61}
+local	float	bottom_squish_small	%read{63,63} %write{62,62}
+local	float	stem_hole_pos	%read{73,73} %write{71,71}
+local	float	stem_hole	%read{73,74} %write{72,73}
+local	float	slice_val	%read{159,160} %write{75,159}
+local	int	max_num_slices	%read{79,79} %write{76,76}
+local	int	min_num_slices	%read{79,82} %write{77,77}
+local	float	num_slices	%read{88,136} %write{83,83}
+local	float	band_pos_total	%read{88,159} %write{85,158}
+local	float	___332_slice_pos	%read{88,136} %write{88,136}
+local	float	___333_j	%read{88,136} %write{88,136}
+local	float	___333_coef	%read{88,136} %write{88,136}
+local	float	___333_band_pos	%read{88,136} %write{88,136}
+local	float	___333_band_pos_2	%read{88,136} %write{88,136}
+local	float	band_length	%read{153,153} %write{152,152}
+local	float	coef	%read{157,217} %write{156,165}
+local	float	coef2	%read{164,164} %write{163,163}
+local	point	UVW	%read{175,175} %write{167,167}
+local	float	Scale	%read{175,175} %write{168,168}
+local	float	Radius	%read{179,216} %write{169,169}
+local	float	BumpAmount	%read{2147483647,-1} %write{170,170}
+local	float	BumpShape	%read{2147483647,-1} %write{171,171}
+local	float	dots	%read{219,219} %write{172,218}
+local	float	dots_pos	%read{217,218} %write{173,217}
+local	float	Dist	%read{179,216} %write{174,216}
+local	point	pnt	%read{179,216} %write{175,175}
+local	float	pri	%read{179,216} %write{176,216}
+local	float	___338_x	%read{179,216} %write{178,216}
+local	float	___340_y	%read{179,216} %write{179,216}
+local	float	___342_z	%read{179,216} %write{179,216}
+local	point	___343_rndpoint	%read{179,216} %write{179,216}
+local	point	___343_dotcenter	%read{179,216} %write{179,216}
+local	float	___343_dist	%read{179,216} %write{179,216}
+local	float	___343_priority	%read{179,216} %write{179,216}
+const	float	$const1	0.899999976		%read{0,194} %write{2147483647,-1}
+const	int	$const2	0		%read{2,202} %write{2147483647,-1}
 const	int	$const3	6		%read{3,3} %write{2147483647,-1}
 temp	int	$tmp1	%read{3,12} %write{3,12}
 temp	int	$tmp2	%read{1,12} %write{2,12}
 temp	float	$tmp3	%read{3,12} %write{3,12}
 temp	float	$tmp4	%read{3,12} %write{3,12}
-const	string	$const4	"perlin"		%read{6,6} %write{2147483647,-1}
+const	string	$const4	"perlin"		%read{6,144} %write{2147483647,-1}
 temp	point	$tmp5	%read{3,12} %write{3,12}
 temp	float	$tmp6	%read{3,12} %write{3,12}
 temp	float	$tmp7	%read{3,12} %write{3,12}
 const	float	$const5	3.0999999		%read{11,11} %write{2147483647,-1}
-const	float	$const7	1		%read{12,12} %write{2147483647,-1}
-const	float	$const8	0.100000001		%read{13,13} %write{2147483647,-1}
-const	float	$const9	0.649999976		%read{14,14} %write{2147483647,-1}
-const	float	$const10	0.00999999978		%read{15,15} %write{2147483647,-1}
-const	float	$const11	0.150000006		%read{15,15} %write{2147483647,-1}
-const	float	$const13	-3		%read{16,16} %write{2147483647,-1}
-const	float	$const14	0		%read{16,41} %write{2147483647,-1}
-const	int	$const15	32		%read{18,18} %write{2147483647,-1}
-temp	float	$tmp8	%read{22,22} %write{21,21}
-temp	float	$tmp9	%read{21,21} %write{20,20}
-const	string	$const16	"uperlin"		%read{20,34} %write{2147483647,-1}
-temp	point	$tmp10	%read{20,20} %write{19,19}
-const	float	$const17	0.00499999989		%read{22,22} %write{2147483647,-1}
-const	float	$const18	0.0219999999		%read{23,23} %write{2147483647,-1}
-temp	float	$tmp11	%read{25,25} %write{23,23}
-const	float	$const19	0.023		%read{24,24} %write{2147483647,-1}
-temp	float	$tmp12	%read{25,25} %write{24,24}
-const	float	$const20	-0.699999988		%read{26,26} %write{2147483647,-1}
-const	float	$const21	0.99000001		%read{29,29} %write{2147483647,-1}
-const	float	$const23	-1		%read{30,30} %write{2147483647,-1}
-const	int	$const24	64		%read{32,32} %write{2147483647,-1}
-temp	float	$tmp13	%read{36,36} %write{35,35}
-temp	float	$tmp14	%read{35,35} %write{34,34}
-temp	point	$tmp15	%read{34,34} %write{33,33}
-const	float	$const25	0.00100000005		%read{36,36} %write{2147483647,-1}
-const	float	$const26	0.993499994		%read{37,37} %write{2147483647,-1}
-temp	float	$tmp16	%read{39,39} %write{37,37}
-const	float	$const27	0.995000005		%read{38,38} %write{2147483647,-1}
-temp	float	$tmp17	%read{39,39} %write{38,38}
-const	float	$const28	0.0500000007		%read{40,40} %write{2147483647,-1}
+const	int	$const6	1		%read{137,187} %write{2147483647,-1}
+const	float	$const7	1		%read{12,216} %write{2147483647,-1}
+const	float	$const8	0.100000001		%read{13,163} %write{2147483647,-1}
+const	float	$const9	0.75		%read{14,14} %write{2147483647,-1}
+const	int	$const10	7		%read{15,77} %write{2147483647,-1}
+const	string	$const11	"shader"		%read{18,18} %write{2147483647,-1}
+const	string	$const12	"transform"		%read{17,166} %write{2147483647,-1}
+const	string	$const13	"common"		%read{18,167} %write{2147483647,-1}
+const	float	$const15	3		%read{19,19} %write{2147483647,-1}
+const	int	$const16	10		%read{22,22} %write{2147483647,-1}
+temp	int	$tmp8	%read{22,30} %write{22,30}
+temp	int	$tmp9	%read{20,30} %write{21,30}
+temp	float	$tmp10	%read{22,30} %write{22,30}
+temp	float	$tmp11	%read{22,30} %write{22,30}
+temp	point	$tmp12	%read{22,30} %write{22,30}
+temp	float	$tmp13	%read{22,30} %write{22,30}
+const	float	$const17	2.0999999		%read{29,90} %write{2147483647,-1}
+const	float	$const18	0		%read{31,218} %write{2147483647,-1}
+const	float	$const19	0.0500000007		%read{31,146} %write{2147483647,-1}
+const	float	$const20	-0.0199999996		%read{32,32} %write{2147483647,-1}
+const	float	$const21	0.00999999978		%read{35,163} %write{2147483647,-1}
+const	float	$const22	0.150000006		%read{35,35} %write{2147483647,-1}
+const	float	$const24	-3		%read{36,36} %write{2147483647,-1}
+const	int	$const25	32		%read{38,38} %write{2147483647,-1}
+temp	float	$tmp14	%read{42,42} %write{41,41}
+temp	float	$tmp15	%read{41,41} %write{40,40}
+const	string	$const26	"uperlin"		%read{40,78} %write{2147483647,-1}
+temp	point	$tmp16	%read{40,40} %write{39,39}
+const	float	$const27	0.00499999989		%read{42,42} %write{2147483647,-1}
+const	float	$const28	0.0219999999		%read{43,43} %write{2147483647,-1}
+temp	float	$tmp17	%read{45,45} %write{43,43}
+const	float	$const29	0.023		%read{44,44} %write{2147483647,-1}
+temp	float	$tmp18	%read{45,45} %write{44,44}
+const	int	$const30	42		%read{46,46} %write{2147483647,-1}
+const	int	$const31	5		%read{49,141} %write{2147483647,-1}
+temp	int	$tmp19	%read{49,55} %write{49,55}
+temp	int	$tmp20	%read{47,55} %write{48,55}
+temp	float	$tmp21	%read{49,55} %write{49,55}
+temp	point	$tmp22	%read{49,55} %write{49,55}
+temp	float	$tmp23	%read{2147483647,-1} %write{49,55}
+temp	float	$tmp24	%read{57,57} %write{56,56}
+const	float	$const32	0.5		%read{56,104} %write{2147483647,-1}
+const	float	$const33	-0.200000003		%read{57,57} %write{2147483647,-1}
+const	float	$const34	-0.699999988		%read{58,58} %write{2147483647,-1}
+const	float	$const35	0.99000001		%read{61,61} %write{2147483647,-1}
+const	int	$const36	-1		%read{176,186} %write{2147483647,-1}
+const	float	$const37	-1		%read{62,62} %write{2147483647,-1}
+const	int	$const38	64		%read{64,64} %write{2147483647,-1}
+temp	float	$tmp25	%read{68,68} %write{67,67}
+temp	float	$tmp26	%read{67,67} %write{66,66}
+temp	point	$tmp27	%read{66,66} %write{65,65}
+const	float	$const39	0.00100000005		%read{68,150} %write{2147483647,-1}
+const	float	$const40	0.993499994		%read{69,69} %write{2147483647,-1}
+temp	float	$tmp28	%read{71,71} %write{69,69}
+const	float	$const41	0.995000005		%read{70,70} %write{2147483647,-1}
+temp	float	$tmp29	%read{71,71} %write{70,70}
+const	float	$const42	-0.300000012		%read{75,75} %write{2147483647,-1}
+const	int	$const43	9		%read{76,76} %write{2147483647,-1}
+temp	float	$tmp30	%read{81,81} %write{78,78}
+temp	int	$tmp31	%read{80,80} %write{79,79}
+temp	float	$tmp32	%read{83,83} %write{81,81}
+temp	float	$tmp33	%read{81,81} %write{80,80}
+temp	float	$tmp34	%read{83,83} %write{82,82}
+temp	int	$tmp35	%read{88,136} %write{88,136}
+temp	int	$tmp36	%read{86,136} %write{87,136}
+temp	float	$tmp37	%read{88,136} %write{88,136}
+temp	float	$tmp38	%read{88,136} %write{88,136}
+temp	float	$tmp39	%read{88,136} %write{88,136}
+temp	float	$tmp40	%read{88,136} %write{88,136}
+const	float	$const44	0.949999988		%read{97,156} %write{2147483647,-1}
+temp	int	$tmp41	%read{88,136} %write{88,136}
+temp	int	$tmp42	%read{88,136} %write{88,136}
+temp	int	$tmp43	%read{88,136} %write{88,136}
+temp	int	$tmp44	%read{88,136} %write{88,136}
+temp	float	$tmp45	%read{88,136} %write{88,136}
+temp	float	$tmp46	%read{88,136} %write{88,136}
+temp	point	$tmp47	%read{88,136} %write{88,136}
+temp	int	$tmp48	%read{88,136} %write{88,136}
+temp	int	$tmp49	%read{88,136} %write{88,136}
+const	float	$const45	2.29999995		%read{114,114} %write{2147483647,-1}
+temp	float	$tmp50	%read{88,136} %write{88,136}
+temp	point	$tmp51	%read{88,136} %write{88,136}
+temp	float	$tmp52	%read{88,136} %write{88,136}
+temp	float	$tmp53	%read{88,136} %write{88,136}
+const	float	$const46	0.800000012		%read{122,122} %write{2147483647,-1}
+temp	float	$tmp54	%read{88,136} %write{88,136}
+temp	float	$tmp55	%read{88,136} %write{88,136}
+temp	float	$tmp56	%read{88,136} %write{88,136}
+temp	float	$tmp57	%read{88,136} %write{88,136}
+temp	float	$tmp58	%read{88,136} %write{88,136}
+temp	float	$tmp59	%read{88,136} %write{88,136}
+temp	float	$tmp60	%read{88,136} %write{88,136}
+temp	int	$tmp61	%read{141,149} %write{141,149}
+temp	int	$tmp62	%read{139,149} %write{140,149}
+temp	float	$tmp63	%read{141,149} %write{141,149}
+temp	float	$tmp64	%read{141,149} %write{141,149}
+temp	point	$tmp65	%read{141,149} %write{141,149}
+temp	float	$tmp66	%read{141,149} %write{141,149}
+const	float	$const47	1.5		%read{148,148} %write{2147483647,-1}
+temp	float	$tmp67	%read{152,152} %write{150,150}
+temp	float	$tmp68	%read{152,152} %write{151,151}
+const	float	$const48	0.649999976		%read{156,156} %write{2147483647,-1}
+temp	float	$tmp69	%read{156,156} %write{155,155}
+const	float	$const49	-0.100000001		%read{161,161} %write{2147483647,-1}
+const	float	$const50	0.200000003		%read{161,161} %write{2147483647,-1}
+temp	float	$tmp70	%read{163,163} %write{162,162}
+const	string	$const51	"object"		%read{167,167} %write{2147483647,-1}
+const	float	$const52	0.0175000001		%read{168,168} %write{2147483647,-1}
+const	float	$const53	0.600000024		%read{169,169} %write{2147483647,-1}
+temp	int	$tmp71	%read{179,216} %write{179,216}
+temp	int	$tmp72	%read{177,216} %write{178,216}
+temp	int	$tmp73	%read{179,216} %write{179,216}
+temp	int	$tmp74	%read{179,216} %write{179,216}
+temp	int	$tmp75	%read{179,216} %write{179,216}
+temp	int	$tmp76	%read{179,216} %write{179,216}
+temp	point	$tmp77	%read{179,216} %write{179,216}
+temp	point	$tmp78	%read{179,216} %write{179,216}
+temp	point	$tmp79	%read{179,216} %write{179,216}
+temp	vector	$tmp80	%read{179,216} %write{179,216}
+const	string	$const54	"cell"		%read{193,197} %write{2147483647,-1}
+const	float	$const56	2		%read{193,197} %write{2147483647,-1}
+temp	vector	$tmp81	%read{179,216} %write{179,216}
+temp	int	$tmp82	%read{179,216} %write{179,216}
+temp	int	$tmp83	%read{179,216} %write{179,216}
+temp	int	$tmp84	%read{179,216} %write{179,216}
+temp	int	$tmp85	%read{179,216} %write{179,216}
+temp	float	$tmp86	%read{179,216} %write{179,216}
+temp	float	$tmp87	%read{179,216} %write{179,216}
+const	float	$const57	1.58000004		%read{208,208} %write{2147483647,-1}
+temp	float	$tmp88	%read{179,216} %write{179,216}
+temp	float	$tmp89	%read{2147483647,-1} %write{179,216}
+temp	float	$tmp90	%read{2147483647,-1} %write{179,216}
+temp	float	$tmp91	%read{2147483647,-1} %write{179,216}
+const	float	$const58	-0.0399999991		%read{218,218} %write{2147483647,-1}
 code ___main___
 # displacement_shader.osl:14
 # 	float freq=0.9;
@@ -83,76 +223,437 @@ code ___main___
 # 	for(i=0;i<6;i+=1)
 	add		i i $const7 	%line{16} %argrw{"wrr"}
 # displacement_shader.osl:21
-# 	mag=smoothstep(0.1,0.9,mag);
+# 	mag = smoothstep(0.1, 0.9, mag);
 	smoothstep	mag $const8 $const1 mag 	%line{21} %argrw{"wrrr"}
 # displacement_shader.osl:22
-# 	mag*=0.65;
+# 	mag*=0.75;
 	mul		mag mag $const9 	%line{22} %argrw{"wrr"}
-# displacement_shader.osl:26
-# 	float top_center = smoothstep(0.01,0.15,v);
-	smoothstep	top_center $const10 $const11 v 	%line{26} %argrw{"wrrr"}
 # displacement_shader.osl:27
-# 	float top_squish = mix(-3, 0, top_center);
-	mix		top_squish $const13 $const14 top_center 	%line{27} %argrw{"wrrr"}
+# 	freq=7;
+	assign		freq $const10 	%line{27} %argrw{"wr"}
+# displacement_shader.osl:28
+# 	float veins = 0;
+	assign		veins $const2 	%line{28} %argrw{"wr"}
 # displacement_shader.osl:29
-# 	mag+=top_squish;
-	add		mag mag top_squish 	%line{29} %argrw{"wrr"}
+# 	point PP=transform("shader",P);
+	functioncall	$const12 19 	%line{29} %argrw{"r"}
+# /opt/pixar/RenderManProServer-25.2/lib/osl/include/stdosl.h:285
+# point  transform (string to, point p)  { return transform("common",to,p); }
+	transform	PP $const13 $const11 P 	%filename{"/opt/pixar/RenderManProServer-25.2/lib/osl/include/stdosl.h"} %line{285} %argrw{"wrrr"}
+# displacement_shader.osl:30
+# 	PP*=3;
+	mul		PP PP $const15 	%filename{"displacement_shader.osl"} %line{30} %argrw{"wrr"}
+# displacement_shader.osl:32
+# 	for(i=0;i<10;i+=1)
+	for		$tmp9 22 24 30 31 	%line{32} %argrw{"r"}
+	assign		i $const2 	%argrw{"wr"}
+	lt		$tmp8 i $const16 	%argrw{"wrr"}
+	neq		$tmp9 $tmp8 $const2 	%argrw{"wrr"}
 # displacement_shader.osl:34
-# 	freq = 32;
-	assign		freq $const15 	%line{34} %argrw{"wr"}
+# 		veins+=abs((float)noise("perlin",PP*freq))/freq;
+	mul		$tmp12 PP freq 	%line{34} %argrw{"wrr"}
+	noise		$tmp11 $const4 $tmp12 	%argrw{"wrr"}
+	abs		$tmp10 $tmp11 	%argrw{"wr"}
+	div		$tmp13 $tmp10 freq 	%argrw{"wrr"}
+	add		veins veins $tmp13 	%argrw{"wrr"}
 # displacement_shader.osl:35
-# 	float fuzz = abs(noise("uperlin", P*freq))*0.005;
-	mul		$tmp10 P freq 	%line{35} %argrw{"wrr"}
-	noise		$tmp9 $const16 $tmp10 	%argrw{"wrr"}
-	abs		$tmp8 $tmp9 	%argrw{"wr"}
-	mul		fuzz $tmp8 $const17 	%argrw{"wrr"}
-# displacement_shader.osl:36
-# 	float stem_hole_pos = smoothstep(0.022+fuzz, 0.023+fuzz, v);
-	add		$tmp11 $const18 fuzz 	%line{36} %argrw{"wrr"}
-	add		$tmp12 $const19 fuzz 	%argrw{"wrr"}
-	smoothstep	stem_hole_pos $tmp11 $tmp12 v 	%argrw{"wrrr"}
+# 		freq*=2.1;
+	mul		freq freq $const17 	%line{35} %argrw{"wrr"}
+# displacement_shader.osl:32
+# 	for(i=0;i<10;i+=1)
+	add		i i $const7 	%line{32} %argrw{"wrr"}
 # displacement_shader.osl:37
-# 	float stem_hole = -0.7;
-	assign		stem_hole $const20 	%line{37} %argrw{"wr"}
+# 	veins = smoothstep(0, 0.05, veins);
+	smoothstep	veins $const18 $const19 veins 	%line{37} %argrw{"wrrr"}
 # displacement_shader.osl:38
-# 	stem_hole = mix(stem_hole, 0, stem_hole_pos);
-	mix		stem_hole stem_hole $const14 stem_hole_pos 	%line{38} %argrw{"wrrr"}
+# 	float veins_depth = -0.02;
+	assign		veins_depth $const20 	%line{38} %argrw{"wr"}
+# displacement_shader.osl:39
+# 	veins = mix(veins_depth, 0, veins);
+	mix		veins veins_depth $const18 veins 	%line{39} %argrw{"wrrr"}
 # displacement_shader.osl:40
-# 	mag+=stem_hole;
-	add		mag mag stem_hole 	%line{40} %argrw{"wrr"}
+# 	mag+=veins;
+	add		mag mag veins 	%line{40} %argrw{"wrr"}
+# displacement_shader.osl:44
+# 	float top_center = smoothstep(0.01,0.15,v);
+	smoothstep	top_center $const21 $const22 v 	%line{44} %argrw{"wrrr"}
+# displacement_shader.osl:45
+# 	float top_squish = mix(-3, 0, top_center);
+	mix		top_squish $const24 $const18 top_center 	%line{45} %argrw{"wrrr"}
+# displacement_shader.osl:47
+# 	mag+=top_squish;
+	add		mag mag top_squish 	%line{47} %argrw{"wrr"}
 # displacement_shader.osl:52
-# 	float bottom_center_small = smoothstep(0.9,0.99,v);
-	smoothstep	bottom_center_small $const1 $const21 v 	%line{52} %argrw{"wrrr"}
+# 	freq = 32;
+	assign		freq $const25 	%line{52} %argrw{"wr"}
 # displacement_shader.osl:53
-# 	float bottom_squish_small = mix(0, -1, bottom_center_small);
-	mix		bottom_squish_small $const14 $const23 bottom_center_small 	%line{53} %argrw{"wrrr"}
+# 	float fuzz = abs(noise("uperlin", P*freq))*0.005;
+	mul		$tmp16 P freq 	%line{53} %argrw{"wrr"}
+	noise		$tmp15 $const26 $tmp16 	%argrw{"wrr"}
+	abs		$tmp14 $tmp15 	%argrw{"wr"}
+	mul		fuzz $tmp14 $const27 	%argrw{"wrr"}
+# displacement_shader.osl:54
+# 	float top_stem_hole_pos = smoothstep(0.022+fuzz, 0.023+fuzz, v);
+	add		$tmp17 $const28 fuzz 	%line{54} %argrw{"wrr"}
+	add		$tmp18 $const29 fuzz 	%argrw{"wrr"}
+	smoothstep	top_stem_hole_pos $tmp17 $tmp18 v 	%argrw{"wrrr"}
 # displacement_shader.osl:55
-# 	mag+=bottom_squish_small;
-	add		mag mag bottom_squish_small 	%line{55} %argrw{"wrr"}
-# displacement_shader.osl:60
-# 	freq = 64;
-	assign		freq $const24 	%line{60} %argrw{"wr"}
+# 	freq = 42;
+	assign		freq $const30 	%line{55} %argrw{"wr"}
+# displacement_shader.osl:56
+# 	for(i=0;i<5;i+=1)
+	for		$tmp20 49 51 55 56 	%line{56} %argrw{"r"}
+	assign		i $const2 	%argrw{"wr"}
+	lt		$tmp19 i $const31 	%argrw{"wrr"}
+	neq		$tmp20 $tmp19 $const2 	%argrw{"wrr"}
+# displacement_shader.osl:58
+# 		fuzz = abs(noise("uperlin", P*freq));
+	mul		$tmp22 P freq 	%line{58} %argrw{"wrr"}
+	noise		$tmp21 $const26 $tmp22 	%argrw{"wrr"}
+	abs		fuzz $tmp21 	%argrw{"wr"}
+# displacement_shader.osl:59
+# 		freq*2.1;
+	mul		$tmp23 freq $const17 	%line{59} %argrw{"wrr"}
+# displacement_shader.osl:56
+# 	for(i=0;i<5;i+=1)
+	add		i i $const7 	%line{56} %argrw{"wrr"}
 # displacement_shader.osl:61
-# 	fuzz = abs(noise("uperlin", P*freq))*0.001;
-	mul		$tmp15 P freq 	%line{61} %argrw{"wrr"}
-	noise		$tmp14 $const16 $tmp15 	%argrw{"wrr"}
-	abs		$tmp13 $tmp14 	%argrw{"wr"}
-	mul		fuzz $tmp13 $const25 	%argrw{"wrr"}
+# 	fuzz = smoothstep(0.5, 1.0, fuzz)*-0.2;
+	smoothstep	$tmp24 $const32 $const7 fuzz 	%line{61} %argrw{"wrrr"}
+	mul		fuzz $tmp24 $const33 	%argrw{"wrr"}
 # displacement_shader.osl:62
-# 	stem_hole_pos = smoothstep(0.9935+fuzz, 0.995+fuzz, v);
-	add		$tmp16 $const26 fuzz 	%line{62} %argrw{"wrr"}
-	add		$tmp17 $const27 fuzz 	%argrw{"wrr"}
-	smoothstep	stem_hole_pos $tmp16 $tmp17 v 	%argrw{"wrrr"}
-# displacement_shader.osl:63
-# 	stem_hole = 0.05;
-	assign		stem_hole $const28 	%line{63} %argrw{"wr"}
+# 	float top_stem_hole = -0.7+fuzz;
+	add		top_stem_hole $const34 fuzz 	%line{62} %argrw{"wrr"}
 # displacement_shader.osl:64
-# 	stem_hole = mix(0, stem_hole, stem_hole_pos);
-	mix		stem_hole $const14 stem_hole stem_hole_pos 	%line{64} %argrw{"wrrr"}
+# 	top_stem_hole = mix(top_stem_hole, 0, top_stem_hole_pos);
+	mix		top_stem_hole top_stem_hole $const18 top_stem_hole_pos 	%line{64} %argrw{"wrrr"}
 # displacement_shader.osl:66
+# 	mag+=top_stem_hole;
+	add		mag mag top_stem_hole 	%line{66} %argrw{"wrr"}
+# displacement_shader.osl:78
+# 	float bottom_center_small = smoothstep(0.9,0.99,v);
+	smoothstep	bottom_center_small $const1 $const35 v 	%line{78} %argrw{"wrrr"}
+# displacement_shader.osl:79
+# 	float bottom_squish_small = mix(0, -1, bottom_center_small);
+	mix		bottom_squish_small $const18 $const37 bottom_center_small 	%line{79} %argrw{"wrrr"}
+# displacement_shader.osl:81
+# 	mag+=bottom_squish_small;
+	add		mag mag bottom_squish_small 	%line{81} %argrw{"wrr"}
+# displacement_shader.osl:86
+# 	freq = 64;
+	assign		freq $const38 	%line{86} %argrw{"wr"}
+# displacement_shader.osl:87
+# 	fuzz = abs(noise("uperlin", P*freq))*0.001;
+	mul		$tmp27 P freq 	%line{87} %argrw{"wrr"}
+	noise		$tmp26 $const26 $tmp27 	%argrw{"wrr"}
+	abs		$tmp25 $tmp26 	%argrw{"wr"}
+	mul		fuzz $tmp25 $const39 	%argrw{"wrr"}
+# displacement_shader.osl:88
+# 	float stem_hole_pos = smoothstep(0.9935+fuzz, 0.995+fuzz, v);
+	add		$tmp28 $const40 fuzz 	%line{88} %argrw{"wrr"}
+	add		$tmp29 $const41 fuzz 	%argrw{"wrr"}
+	smoothstep	stem_hole_pos $tmp28 $tmp29 v 	%argrw{"wrrr"}
+# displacement_shader.osl:89
+# 	float stem_hole = 0.05;
+	assign		stem_hole $const19 	%line{89} %argrw{"wr"}
+# displacement_shader.osl:90
+# 	stem_hole = mix(0, stem_hole, stem_hole_pos);
+	mix		stem_hole $const18 stem_hole stem_hole_pos 	%line{90} %argrw{"wrrr"}
+# displacement_shader.osl:92
 # 	mag+=stem_hole;
-	add		mag mag stem_hole 	%line{66} %argrw{"wrr"}
-# displacement_shader.osl:73
+	add		mag mag stem_hole 	%line{92} %argrw{"wrr"}
+# displacement_shader.osl:98
+# 	float slice_val = -0.3;
+	assign		slice_val $const42 	%line{98} %argrw{"wr"}
+# displacement_shader.osl:100
+# 	int max_num_slices = 9;
+	assign		max_num_slices $const43 	%line{100} %argrw{"wr"}
+# displacement_shader.osl:101
+# 	int min_num_slices = 7;
+	assign		min_num_slices $const10 	%line{101} %argrw{"wr"}
+# displacement_shader.osl:102
+# 	float num_slices = min_num_slices + noise("uperlin", 0.5)*(max_num_slices-min_num_slices);
+	noise		$tmp30 $const26 $const32 	%line{102} %argrw{"wrr"}
+	sub		$tmp31 max_num_slices min_num_slices 	%argrw{"wrr"}
+	assign		$tmp33 $tmp31 	%argrw{"wr"}
+	mul		$tmp32 $tmp30 $tmp33 	%argrw{"wrr"}
+	assign		$tmp34 min_num_slices 	%argrw{"wr"}
+	add		num_slices $tmp34 $tmp32 	%argrw{"wrr"}
+# displacement_shader.osl:103
+# 	i = 0;
+	assign		i $const2 	%line{103} %argrw{"wr"}
+# displacement_shader.osl:105
+# 	float band_pos_total = 0;
+	assign		band_pos_total $const2 	%line{105} %argrw{"wr"}
+# displacement_shader.osl:106
+# 	for (i=0.5;i<num_slices;i+=1)
+	for		$tmp36 88 90 136 137 	%line{106} %argrw{"r"}
+	assign		i $const32 	%argrw{"wr"}
+	lt		$tmp35 i num_slices 	%argrw{"wrr"}
+	neq		$tmp36 $tmp35 $const2 	%argrw{"wrr"}
+# displacement_shader.osl:108
+# 		freq = 2.1;
+	assign		freq $const17 	%line{108} %argrw{"wr"}
+# displacement_shader.osl:109
+# 		fuzz = abs(noise("perlin", u*freq))*0.1;
+	mul		$tmp39 u freq 	%line{109} %argrw{"wrr"}
+	noise		$tmp38 $const4 $tmp39 	%argrw{"wrr"}
+	abs		$tmp37 $tmp38 	%argrw{"wr"}
+	mul		fuzz $tmp37 $const8 	%argrw{"wrr"}
+# displacement_shader.osl:110
+# 		float slice_pos = (i)/num_slices + fuzz;
+	div		$tmp40 i num_slices 	%line{110} %argrw{"wrr"}
+	add		___332_slice_pos $tmp40 fuzz 	%argrw{"wrr"}
+# displacement_shader.osl:112
+# 		if (slice_pos<0.95 && slice_pos>0.05)
+	lt		$tmp41 ___332_slice_pos $const44 	%line{112} %argrw{"wrr"}
+	neq		$tmp42 $tmp41 $const2 	%argrw{"wrr"}
+	if		$tmp42 103 103 	%argrw{"r"}
+	gt		$tmp43 ___332_slice_pos $const19 	%argrw{"wrr"}
+	neq		$tmp44 $tmp43 $const2 	%argrw{"wrr"}
+	assign		$tmp42 $tmp44 	%argrw{"wr"}
+	if		$tmp42 136 136 	%argrw{"r"}
+# displacement_shader.osl:114
+# 			freq = 0.5;
+	assign		freq $const32 	%line{114} %argrw{"wr"}
+# displacement_shader.osl:115
+# 			fuzz = abs(noise("perlin", P*freq))*0.05;
+	mul		$tmp47 P freq 	%line{115} %argrw{"wrr"}
+	noise		$tmp46 $const4 $tmp47 	%argrw{"wrr"}
+	abs		$tmp45 $tmp46 	%argrw{"wr"}
+	mul		fuzz $tmp45 $const19 	%argrw{"wrr"}
+# displacement_shader.osl:117
+# 			float j = 0;
+	assign		___333_j $const2 	%line{117} %argrw{"wr"}
+# displacement_shader.osl:118
+# 			for (j=0;j<5;j+=1)
+	for		$tmp49 112 114 120 121 	%line{118} %argrw{"r"}
+	assign		___333_j $const2 	%argrw{"wr"}
+	lt		$tmp48 ___333_j $const31 	%argrw{"wrr"}
+	neq		$tmp49 $tmp48 $const2 	%argrw{"wrr"}
+# displacement_shader.osl:120
+# 				freq += 2.3;
+	add		freq freq $const45 	%line{120} %argrw{"wrr"}
+# displacement_shader.osl:121
+# 				fuzz += noise("perlin", P*freq)/freq*0.1;
+	mul		$tmp51 P freq 	%line{121} %argrw{"wrr"}
+	noise		$tmp50 $const4 $tmp51 	%argrw{"wrr"}
+	div		$tmp52 $tmp50 freq 	%argrw{"wrr"}
+	mul		$tmp53 $tmp52 $const8 	%argrw{"wrr"}
+	add		fuzz fuzz $tmp53 	%argrw{"wrr"}
+# displacement_shader.osl:118
+# 			for (j=0;j<5;j+=1)
+	add		___333_j ___333_j $const7 	%line{118} %argrw{"wrr"}
+# displacement_shader.osl:124
+# 			float coef = smoothstep(0.8, 0.95, 1-v);
+	sub		$tmp54 $const7 v 	%line{124} %argrw{"wrr"}
+	smoothstep	___333_coef $const46 $const44 $tmp54 	%argrw{"wrrr"}
+# displacement_shader.osl:125
+# 			coef = mix(0, 1, coef);
+	mix		___333_coef $const18 $const7 ___333_coef 	%line{125} %argrw{"wrrr"}
+# displacement_shader.osl:126
+# 			fuzz *= coef;
+	mul		fuzz fuzz ___333_coef 	%line{126} %argrw{"wrr"}
+# displacement_shader.osl:128
+# 			float band_pos = smoothstep(slice_pos+fuzz, slice_pos+0.05+fuzz, u);
+	add		$tmp55 ___332_slice_pos fuzz 	%line{128} %argrw{"wrr"}
+	add		$tmp56 ___332_slice_pos $const19 	%argrw{"wrr"}
+	add		$tmp57 $tmp56 fuzz 	%argrw{"wrr"}
+	smoothstep	___333_band_pos $tmp55 $tmp57 u 	%argrw{"wrrr"}
+# displacement_shader.osl:129
+# 			float band_pos_2 = smoothstep(slice_pos-0.05+fuzz, slice_pos+fuzz, u);
+	sub		$tmp58 ___332_slice_pos $const19 	%line{129} %argrw{"wrr"}
+	add		$tmp59 $tmp58 fuzz 	%argrw{"wrr"}
+	add		$tmp60 ___332_slice_pos fuzz 	%argrw{"wrr"}
+	smoothstep	___333_band_pos_2 $tmp59 $tmp60 u 	%argrw{"wrrr"}
+# displacement_shader.osl:131
+# 			band_pos-=band_pos_2;
+	sub		___333_band_pos ___333_band_pos ___333_band_pos_2 	%line{131} %argrw{"wrr"}
+# displacement_shader.osl:132
+# 			band_pos = abs(band_pos);
+	abs		___333_band_pos ___333_band_pos 	%line{132} %argrw{"wr"}
+# displacement_shader.osl:134
+# 			band_pos_total += band_pos;
+	add		band_pos_total band_pos_total ___333_band_pos 	%line{134} %argrw{"wrr"}
+# displacement_shader.osl:106
+# 	for (i=0.5;i<num_slices;i+=1)
+	add		i i $const7 	%line{106} %argrw{"wrr"}
+# displacement_shader.osl:139
+# 	freq = 1;
+	assign		freq $const6 	%line{139} %argrw{"wr"}
+# displacement_shader.osl:140
+# 	fuzz =  0;
+	assign		fuzz $const2 	%line{140} %argrw{"wr"}
+# displacement_shader.osl:141
+# 	for(i=0;i<5;i+=1)
+	for		$tmp62 141 143 149 150 	%line{141} %argrw{"r"}
+	assign		i $const2 	%argrw{"wr"}
+	lt		$tmp61 i $const31 	%argrw{"wrr"}
+	neq		$tmp62 $tmp61 $const2 	%argrw{"wrr"}
+# displacement_shader.osl:143
+# 		fuzz += abs(noise("perlin", P*freq))*0.05;
+	mul		$tmp65 P freq 	%line{143} %argrw{"wrr"}
+	noise		$tmp64 $const4 $tmp65 	%argrw{"wrr"}
+	abs		$tmp63 $tmp64 	%argrw{"wr"}
+	mul		$tmp66 $tmp63 $const19 	%argrw{"wrr"}
+	add		fuzz fuzz $tmp66 	%argrw{"wrr"}
+# displacement_shader.osl:144
+# 		freq+=1.5;
+	add		freq freq $const47 	%line{144} %argrw{"wrr"}
+# displacement_shader.osl:141
+# 	for(i=0;i<5;i+=1)
+	add		i i $const7 	%line{141} %argrw{"wrr"}
+# displacement_shader.osl:148
+# 	float band_length = smoothstep(0.001+fuzz, 0.1+fuzz, v);
+	add		$tmp67 $const39 fuzz 	%line{148} %argrw{"wrr"}
+	add		$tmp68 $const8 fuzz 	%argrw{"wrr"}
+	smoothstep	band_length $tmp67 $tmp68 v 	%argrw{"wrrr"}
+# displacement_shader.osl:149
+# 	band_pos_total-=band_length;
+	sub		band_pos_total band_pos_total band_length 	%line{149} %argrw{"wrr"}
+# displacement_shader.osl:150
+# 	band_pos_total*=top_stem_hole_pos;
+	mul		band_pos_total band_pos_total top_stem_hole_pos 	%line{150} %argrw{"wrr"}
+# displacement_shader.osl:151
+# 	float coef = smoothstep(0.65, 0.95, 1-v);
+	sub		$tmp69 $const7 v 	%line{151} %argrw{"wrr"}
+	smoothstep	coef $const48 $const44 $tmp69 	%argrw{"wrrr"}
+# displacement_shader.osl:152
+# 	coef = mix(0.01, 1, coef);
+	mix		coef $const21 $const7 coef 	%line{152} %argrw{"wrrr"}
+# displacement_shader.osl:153
+# 	band_pos_total *= coef;
+	mul		band_pos_total band_pos_total coef 	%line{153} %argrw{"wrr"}
+# displacement_shader.osl:154
+# 	slice_val = mix(0, slice_val, band_pos_total);
+	mix		slice_val $const18 slice_val band_pos_total 	%line{154} %argrw{"wrrr"}
+# displacement_shader.osl:156
+# 	mag+=slice_val;
+	add		mag mag slice_val 	%line{156} %argrw{"wrr"}
+# displacement_shader.osl:162
+# 	coef = smoothstep(-0.1, 0.2, v);
+	smoothstep	coef $const49 $const50 v 	%line{162} %argrw{"wrrr"}
+# displacement_shader.osl:163
+# 	float coef2 = smoothstep(0.01, 0.1, (1-v));
+	sub		$tmp70 $const7 v 	%line{163} %argrw{"wrr"}
+	smoothstep	coef2 $const21 $const8 $tmp70 	%argrw{"wrrr"}
+# displacement_shader.osl:164
+# 	coef *= coef2;
+	mul		coef coef coef2 	%line{164} %argrw{"wrr"}
+# displacement_shader.osl:165
+# 	coef = mix(0, 1, coef);
+	mix		coef $const18 $const7 coef 	%line{165} %argrw{"wrrr"}
+# displacement_shader.osl:167
+# 	point UVW = transform("object", P);
+	functioncall	$const12 168 	%line{167} %argrw{"r"}
+# /opt/pixar/RenderManProServer-25.2/lib/osl/include/stdosl.h:285
+# point  transform (string to, point p)  { return transform("common",to,p); }
+	transform	UVW $const13 $const51 P 	%filename{"/opt/pixar/RenderManProServer-25.2/lib/osl/include/stdosl.h"} %line{285} %argrw{"wrrr"}
+# displacement_shader.osl:168
+# 	float Scale  = 0.0175;
+	assign		Scale $const52 	%filename{"displacement_shader.osl"} %line{168} %argrw{"wr"}
+# displacement_shader.osl:169
+# 	float Radius = 0.6*coef;
+	mul		Radius $const53 coef 	%line{169} %argrw{"wrr"}
+# displacement_shader.osl:170
+# 	float BumpAmount = 1.0;
+	assign		BumpAmount $const7 	%line{170} %argrw{"wr"}
+# displacement_shader.osl:171
+# 	float BumpShape  = 1.0;
+	assign		BumpShape $const7 	%line{171} %argrw{"wr"}
+# displacement_shader.osl:173
+# 	float dots = 0;
+	assign		dots $const2 	%line{173} %argrw{"wr"}
+# displacement_shader.osl:174
+# 	float dots_pos = 0;
+	assign		dots_pos $const2 	%line{174} %argrw{"wr"}
+# displacement_shader.osl:175
+# 	float Dist   = 0;
+	assign		Dist $const2 	%line{175} %argrw{"wr"}
+# displacement_shader.osl:177
+# 	point pnt = UVW / Scale;
+	div		pnt UVW Scale 	%line{177} %argrw{"wrr"}
+# displacement_shader.osl:178
+# 	float pri = -1;
+	assign		pri $const36 	%line{178} %argrw{"wr"}
+# displacement_shader.osl:180
+#   for (float x = -1; x <= 1; x++)
+	for		$tmp72 179 181 215 217 	%line{180} %argrw{"r"}
+	assign		___338_x $const36 	%argrw{"wr"}
+	le		$tmp71 ___338_x $const6 	%argrw{"wrr"}
+	neq		$tmp72 $tmp71 $const2 	%argrw{"wrr"}
+# displacement_shader.osl:182
+#     for (float y = -1; y <= 1; y++)
+	for		$tmp74 183 185 213 215 	%line{182} %argrw{"r"}
+	assign		___340_y $const36 	%argrw{"wr"}
+	le		$tmp73 ___340_y $const6 	%argrw{"wrr"}
+	neq		$tmp74 $tmp73 $const2 	%argrw{"wrr"}
+# displacement_shader.osl:184
+# 			for(float z = -1; z <= 1; z++)
+	for		$tmp76 187 189 211 213 	%line{184} %argrw{"r"}
+	assign		___342_z $const36 	%argrw{"wr"}
+	le		$tmp75 ___342_z $const6 	%argrw{"wrr"}
+	neq		$tmp76 $tmp75 $const2 	%argrw{"wrr"}
+# displacement_shader.osl:186
+# 				point rndpoint = floor(pnt) + point(x, y, z) + 0.00;
+	floor		$tmp77 pnt 	%line{186} %argrw{"wr"}
+	point		$tmp78 ___338_x ___340_y ___342_z 	%argrw{"wrrr"}
+	add		$tmp79 $tmp77 $tmp78 	%argrw{"wrr"}
+	add		___343_rndpoint $tmp79 $const18 	%argrw{"wrr"}
+# displacement_shader.osl:187
+# 				point dotcenter = rndpoint + noise("cell", rndpoint, 2)*0.9;
+	noise		$tmp80 $const54 ___343_rndpoint $const56 	%line{187} %argrw{"wrrr"}
+	mul		$tmp81 $tmp80 $const1 	%argrw{"wrr"}
+	add		___343_dotcenter ___343_rndpoint $tmp81 	%argrw{"wrr"}
+# displacement_shader.osl:188
+# 				float dist = distance(dotcenter, pnt);
+	distance	___343_dist ___343_dotcenter pnt 	%line{188} %argrw{"wrr"}
+# displacement_shader.osl:189
+# 				float priority = noise("cell", rndpoint, 2);
+	noise		___343_priority $const54 ___343_rndpoint $const56 	%line{189} %argrw{"wrrr"}
+# displacement_shader.osl:191
+# 				if (dist < Radius && priority > pri)
+	lt		$tmp82 ___343_dist Radius 	%line{191} %argrw{"wrr"}
+	neq		$tmp83 $tmp82 $const2 	%argrw{"wrr"}
+	if		$tmp83 204 204 	%argrw{"r"}
+	gt		$tmp84 ___343_priority pri 	%argrw{"wrr"}
+	neq		$tmp85 $tmp84 $const2 	%argrw{"wrr"}
+	assign		$tmp83 $tmp85 	%argrw{"wr"}
+	if		$tmp83 211 211 	%argrw{"r"}
+# displacement_shader.osl:193
+# 					pri = priority;
+	assign		pri ___343_priority 	%line{193} %argrw{"wr"}
+# displacement_shader.osl:194
+# 					Dist   = dist / Radius;
+	div		Dist ___343_dist Radius 	%line{194} %argrw{"wrr"}
+# displacement_shader.osl:195
+# 					dots_pos = pow(sin((1.0 - Dist) * 1.58), 1.0);
+	sub		$tmp87 $const7 Dist 	%line{195} %argrw{"wrr"}
+	mul		$tmp88 $tmp87 $const57 	%argrw{"wrr"}
+	sin		$tmp86 $tmp88 	%argrw{"wr"}
+	pow		dots_pos $tmp86 $const7 	%argrw{"wrr"}
+# displacement_shader.osl:184
+# 			for(float z = -1; z <= 1; z++)
+	assign		$tmp89 ___342_z 	%line{184} %argrw{"wr"}
+	add		___342_z ___342_z $const7 	%argrw{"wrr"}
+# displacement_shader.osl:182
+#     for (float y = -1; y <= 1; y++)
+	assign		$tmp90 ___340_y 	%line{182} %argrw{"wr"}
+	add		___340_y ___340_y $const7 	%argrw{"wrr"}
+# displacement_shader.osl:180
+#   for (float x = -1; x <= 1; x++)
+	assign		$tmp91 ___338_x 	%line{180} %argrw{"wr"}
+	add		___338_x ___338_x $const7 	%argrw{"wrr"}
+# displacement_shader.osl:200
+# 	dots_pos *= coef;
+	mul		dots_pos dots_pos coef 	%line{200} %argrw{"wrr"}
+# displacement_shader.osl:201
+# 	dots = mix(0, -0.04, dots_pos);	
+	mix		dots $const18 $const58 dots_pos 	%line{201} %argrw{"wrrr"}
+# displacement_shader.osl:203
+# 	mag+=dots;
+	add		mag mag dots 	%line{203} %argrw{"wrr"}
+# displacement_shader.osl:208
 # 	Cout=mag;
-	assign		Cout mag 	%line{73} %argrw{"wr"}
+	assign		Cout mag 	%line{208} %argrw{"wr"}
 	end

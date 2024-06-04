@@ -7,7 +7,8 @@ Hider "raytrace" "int incremental" [1]
 PixelVariance 0.001
 Integrator "PxrPathTracer" "integrator"
 
-Projection "perspective" #"fov" [ 30 ]
+# Projection "perspective" "fov" [ 30 ]
+Projection "perspective" "fov" [ 60 ]
 
 WorldBegin
 
@@ -35,12 +36,30 @@ WorldBegin
 
 		Pattern "first" "myShader"
 			"color Cin" [0.99 0.4 0.1]
-		Bxdf "PxrDisney" "forTheMandarin"
-			"reference color baseColor" ["myShader:Cout"]
-			"float specular" [0.8]
-			"float roughness" [0.3]
-		
+			"float Rin" [0.3]
+			"float SSSin" [0.01]
 
+		Bxdf "PxrDisney" "forTheMandarin2"
+			"reference color baseColor" ["myShader:Cout"]
+			"float specular" [0.9]
+			"reference float roughness" ["myShader:Rout"]
+			"reference float subsurface" ["myShader:SSSout"]
+			"color subsurfaceColor" [0.969 0.204 0.094]
+#-----------------------------------------------------------------------------
+		# Wanted to add better subsurface scattering, but it doesn't look good at all
+		# at the object edges, so sticking with disney one :(
+#-----------------------------------------------------------------------------
+		# Bxdf "PxrSurface" "forTheMandarin"
+		# 	"reference color diffuseColor" ["myShader:Cout"]
+		# 	"color specularFaceColor" [0.055 0.055 0.055]
+		# 	"reference float specularRoughness" ["myShader:Rout"]
+		# 	"float specularAnisotropy" [0.7]
+		# 	"float singlescatterGain" [0.5]
+		# 	"color singlescatterColor" [0.969 0.204 0.094]
+		# 	"float singlescatterGain" [0.5]
+		# 	"float singlescatterMfp" [32]
+#-----------------------------------------------------------------------------
+			
 		TransformBegin
 					Scale 1 0.8 1
 					Rotate 90 1 0 0

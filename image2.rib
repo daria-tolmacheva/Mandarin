@@ -1,0 +1,182 @@
+#image2.rib - basic scene with a mandarin 2
+
+Display "image2.tiff" "file" "rgb"
+Format 1080 1920 1.0
+# Format 480 720 1.0
+
+Hider "raytrace" "int incremental" [1] "int maxsamples" [1024]
+DepthOfField 1.4 0.2 17.8
+PixelVariance 0.001
+Integrator "PxrPathTracer" "integrator"
+
+PixelFilter "gaussian" 2 2
+
+Projection "perspective"  "fov" [ 30 ]
+# Projection "perspective" #"fov" [ 90 ]
+
+FrameBegin 1
+##CameraOrientation 10.0 10.0 10.0 0.0 0.0 0.0
+Transform  [.707107  -.408248  -.57735 0
+            0  .816497  -.57735  0
+            -.707107  -.408248  -.57735  0
+            0  0  17.3205  1 ]
+
+  WorldBegin
+
+    TransformBegin
+      Translate 0 -0.5 2
+
+      # # Light
+      # AttributeBegin
+      #   Rotate 15 1 0 0
+      #   Rotate 15 0 1 0
+      #   Rotate 10 0 1 0
+      #   Rotate 210 0 0 1
+      #   Rotate 130 1 0 0
+        
+      #   Light "PxrDomeLight" "theLight"
+      #     "float exposure" [0]
+      #     "float intensity" [0.5]
+      #     "float specular" [0.3]
+      #     "float diffuse" [0.7]
+      #     "string lightColorMap" ["hdri/sky.tx"]
+      #     # "string lightColorMap" ["hdri/trees.tx"]
+      # AttributeEnd
+
+      # Light
+      # AttributeBegin
+      # Attribute "visibility" "int camera" [0]
+      #   Rotate -100 1 0 0
+      #   Rotate 120 0 0 1
+      #   Light "PxrDomeLight" "theLight"
+      #     "float exposure" [0]
+      #     "float intensity" [0.1]
+      #     "string lightColorMap" ["EnvMap.tx"]
+      # AttributeEnd
+
+      # Light
+      AttributeBegin
+        Rotate -90 0 1 0
+        Rotate -90 1 0 0
+        # Rotate -90 0 0 1
+        Light "PxrDomeLight" "theLight"
+          "float exposure" [0]
+          "float intensity" [0.7]
+          "float specular" [0.5]
+          "float diffuse" [0.8]
+          "string lightColorMap" ["hdri/garden.tx"]
+      AttributeEnd
+
+      # Mandarin
+      AttributeBegin
+        Translate -0.8 0 -0.4
+        Scale 2 2 2
+        Rotate -60 0 0 1
+        Rotate -60 0 1 0
+        Rotate -5 1 0 0
+        Rotate -5 0 0 1
+
+        Attribute "displacementbound" "sphere" [0.7] "coordinatesystem" ["world"]
+        Pattern "displacement_shader" "diskTx"
+        Displace "PxrDisplace" "myDisp"
+          "float dispAmount" [ 0.05 ]
+          "reference float dispScalar" [ "diskTx:mag" ]
+
+        Pattern "first" "myShader"
+          "color Cin" [0.99 0.4 0.1]
+          "float Rin" [0.3]
+          "float SSSin" [0.01]
+
+        Bxdf "PxrDisney" "forTheMandarin2"
+          "reference color baseColor" ["myShader:Cout"]
+          "float specular" [0.9]
+          "reference float roughness" ["myShader:Rout"]
+          "reference float subsurface" ["myShader:SSSout"]
+          "color subsurfaceColor" [0.969 0.204 0.094]
+          
+        TransformBegin
+          Scale 1 0.8 1
+          Rotate 90 1 0 0
+          Sphere 1 -1 1 360
+        TransformEnd
+
+      AttributeEnd
+
+      # Mandarin
+      AttributeBegin
+        Translate -0.8 3 -3.8
+        Scale 2 2 2
+        Rotate 20 0 0 1
+        Rotate -90 0 1 0
+        Rotate -10 1 0 0
+        Rotate -20 0 0 1
+
+        Attribute "displacementbound" "sphere" [0.7] "coordinatesystem" ["world"]
+        Pattern "displacement_shader" "diskTx"
+        Displace "PxrDisplace" "myDisp"
+          "float dispAmount" [ 0.05 ]
+          "reference float dispScalar" [ "diskTx:mag" ]
+
+        Pattern "first" "myShader"
+          "color Cin" [0.99 0.4 0.1]
+          "float Rin" [0.3]
+          "float SSSin" [0.01]
+
+        Bxdf "PxrDisney" "forTheMandarin2"
+          "reference color baseColor" ["myShader:Cout"]
+          "float specular" [0.9]
+          "reference float roughness" ["myShader:Rout"]
+          "reference float subsurface" ["myShader:SSSout"]
+          "color subsurfaceColor" [0.969 0.204 0.094]
+          
+        TransformBegin
+          Scale 1 0.8 1
+          Rotate 90 1 0 0
+          Sphere 1 -1 1 360
+        TransformEnd
+
+      AttributeEnd
+
+      # Mandarin
+      AttributeBegin
+        Translate 1 -5 -3.5
+        Scale 2 2 2
+        Rotate 30 1 0 0
+        Rotate -180 0 0 1
+        Rotate -30 0 1 0
+        Rotate -5 1 0 0
+        Rotate -5 0 0 1
+
+        Attribute "displacementbound" "sphere" [0.7] "coordinatesystem" ["world"]
+        Pattern "displacement_shader" "diskTx"
+        Displace "PxrDisplace" "myDisp"
+          "float dispAmount" [ 0.05 ]
+          "reference float dispScalar" [ "diskTx:mag" ]
+
+        Pattern "first" "myShader"
+          "color Cin" [0.99 0.4 0.1]
+          "float Rin" [0.3]
+          "float SSSin" [0.01]
+
+        Bxdf "PxrDisney" "forTheMandarin2"
+          "reference color baseColor" ["myShader:Cout"]
+          "float specular" [0.9]
+          "reference float roughness" ["myShader:Rout"]
+          "reference float subsurface" ["myShader:SSSout"]
+          "color subsurfaceColor" [0.969 0.204 0.094]
+          
+        TransformBegin
+          Scale 1 0.8 1
+          Rotate 90 1 0 0
+          Sphere 1 -1 1 360
+        TransformEnd
+
+      AttributeEnd
+
+    TransformEnd
+
+    Bxdf "PxrDisney" "forTheBackground"
+        "color baseColor" [ 0.1 0.8 0.1 ]
+
+  WorldEnd
+FrameEnd
